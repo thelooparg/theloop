@@ -1,0 +1,79 @@
+from flask import Flask, request, redirect, url_for, render_template_string
+
+app = Flask(__name__)
+
+# HTML templates as Python strings
+home_html = """
+<!DOCTYPE html>
+<html>
+  <head><title>The Loop</title></head>
+  <body style="background-color:black; color:white; font-family:monospace;">
+    <h1>Welcome to The Loop</h1>
+    <p>You found something you weren't supposed to.</p>
+    <p>Enter the access code:</p>
+    <form method="POST">
+      <input type="text" name="code" />
+      <input type="submit" value="Submit" />
+    </form>
+  </body>
+</html>
+"""
+
+riddle_html = """
+<!DOCTYPE html>
+<html>
+  <head><title>Observer Log 01</title></head>
+  <body style="background-color:#111; color:#0f0; font-family:monospace;">
+    <h1>Observer Log 01: ENTRY GRANTED</h1>
+    <p>You’ve seen the cycle. But have you seen the watchers?</p>
+    <p>
+      X = 24<br>
+      J = 10<br>
+      2 = B<br>
+      9 = I<br><br>
+      Watchers come first.<br>
+      What word does this form?
+    </p>
+    <form method="POST">
+      <input type="text" name="answer" />
+      <input type="submit" value="Submit Answer" />
+    </form>
+  </body>
+</html>
+"""
+
+secret_html = """
+<!DOCTYPE html>
+<html>
+  <head><title>Deeper Layer</title></head>
+  <body style="background-color:#000; color:#f00; font-family:monospace;">
+    <h1>YOU FOUND IT</h1>
+    <p>You are outside the pattern now. But it still sees you.</p>
+    <p>Observer Log 02 unlocks soon...</p>
+    <p style="font-size: 12px; color:gray;">Hint: “The next clue isn’t here. But something will be.”</p>
+  </body>
+</html>
+"""
+
+@app.route("/", methods=["GET", "POST"])
+def home():
+    if request.method == "POST":
+        code = request.form.get("code", "").strip().upper()
+        if code == "XJ29":
+            return redirect(url_for("riddle"))
+    return render_template_string(home_html)
+
+@app.route("/riddle", methods=["GET", "POST"])
+def riddle():
+    if request.method == "POST":
+        answer = request.form.get("answer", "").strip().upper()
+        if answer == "JIBX":
+            return redirect(url_for("secret"))
+    return render_template_string(riddle_html)
+
+@app.route("/secret")
+def secret():
+    return render_template_string(secret_html)
+
+if __name__ == "__main__":
+    app.run(debug=True)
